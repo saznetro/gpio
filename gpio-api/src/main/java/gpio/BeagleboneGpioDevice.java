@@ -184,9 +184,7 @@ public class BeagleboneGpioDevice extends GpioDevice {
             reader = new BufferedReader(new FileReader(slotsFile));
             String line = reader.readLine();
             while(line != null) {
-                if (debug) {
-                    System.out.println("line: " + line);
-                }
+               logger.debug("line: " + line);
                 if (line != null && line.contains(name)) {
                     deviceFound = true;
                 }
@@ -219,9 +217,7 @@ public class BeagleboneGpioDevice extends GpioDevice {
             reader = new BufferedReader(new FileReader(slotsFile));
             String line = reader.readLine();
             while(line != null) {
-                if (debug) {
-                    System.out.println("line: " + line);
-                }
+            	logger.debug("line: " + line);
                 int index = line.indexOf(':');
                 if (index >= 0) {
                     lineNumber = line.substring(0, index);

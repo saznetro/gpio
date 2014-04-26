@@ -32,7 +32,6 @@ public class BeagleboneBinaryOutputPin implements BinaryOutputPin {
      * Set pin high.
      * @throws java.io.IOException Failed to read/write device.
      */
-    @Override
     public void high() throws IOException {
         device.setValue(pinDefinition, true);
         //To change body of created methods use File | Settings | File Templates.
@@ -42,7 +41,6 @@ public class BeagleboneBinaryOutputPin implements BinaryOutputPin {
      * Set pin low.
      * @throws java.io.IOException Failed to read/write device.
      */
-    @Override
     public void low() throws IOException {
         device.setValue(pinDefinition, false);
         //To change body of created methods use File | Settings | File Templates.
@@ -51,7 +49,6 @@ public class BeagleboneBinaryOutputPin implements BinaryOutputPin {
     /**
      * Stop using this pin.
      */
-    @Override
     public void close() throws IOException {
         device.close(pinDefinition);
     }

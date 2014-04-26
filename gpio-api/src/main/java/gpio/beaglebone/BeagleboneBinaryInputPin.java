@@ -37,7 +37,6 @@ public class BeagleboneBinaryInputPin implements BinaryInputPin {
      * @return True if pin is high, false otherwise.
      * @throws IOException Failed to read/write device.
      */
-    @Override
     public boolean isHigh() throws IOException {
         byte[] buffer = new byte[10];
         channel.position(0);
@@ -52,7 +51,6 @@ public class BeagleboneBinaryInputPin implements BinaryInputPin {
         return value;
     }
 
-    @Override
     public void waitForEdge(Edge edge) throws IOException {
         device.setEdge(pinDefinition, edge);
         FileMonitor fileMonitor = null;
@@ -68,7 +66,6 @@ public class BeagleboneBinaryInputPin implements BinaryInputPin {
         }
     }
 
-    @Override
     public InputPinChangeMonitor monitorChange(Edge edge) throws IOException {
         device.setEdge(pinDefinition, edge);
         InputPinChangeMonitor inputMonitor = null;
@@ -82,7 +79,6 @@ public class BeagleboneBinaryInputPin implements BinaryInputPin {
     /**
      * Stop using this pin.
      */
-    @Override
     public void close() throws IOException {
         reader.close();
         device.close(pinDefinition);

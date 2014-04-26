@@ -1,6 +1,0 @@
-/.gradle
-/.idea
-/build
-gpio-jni.iml
-*.class
-*.o

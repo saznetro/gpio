@@ -4,18 +4,20 @@ import gpio.epoll.FileMonitor;
 
 import java.io.*;
 
+import org.apache.log4j.Logger;
+
 /**
  * Device abstraction.
  * @author Koert Zeilstra
  */
 public abstract class GpioDevice {
-
+	protected  Logger logger=Logger.getLogger(this.getClass().toString());
     public static final String DEVICE_EXPORT = "/sys/class/gpio/export";
     public static final String DEVICE_UNEXPORT = "/sys/class/gpio/unexport";
 
     public enum PinUse {INPUT_DIGITAL, OUTPUT_DIGITAL, OUTPUT_PWM;}
 
-    protected boolean debug = false;
+    //protected boolean debug = false;
 
     /**
      * Setup pin before use.
@@ -69,9 +71,10 @@ public abstract class GpioDevice {
          * @throws IOException Failed to write to device.
          */
     public void writeToDevice(String device, String text) throws IOException {
-        if (debug) {
+        /*if (debug) {
             System.out.println("writeToDevice: " + device + " - " + text);
-        }
+        }*/
+        logger.debug("writeToDevice: " + device + " - " + text);
         OutputStreamWriter writer = null;
         try {
             writer = new OutputStreamWriter(new FileOutputStream(device));
@@ -96,9 +99,7 @@ public abstract class GpioDevice {
             reader = new BufferedReader(new FileReader(slotsFile));
             String line = reader.readLine();
             while(line != null) {
-                if (debug) {
-                    System.out.println("line: " + line);
-                }
+                logger.debug("line: " + line);
                 if (line != null && line.contains(name)) {
                     deviceFound = true;
                 }
@@ -131,9 +132,7 @@ public abstract class GpioDevice {
             reader = new BufferedReader(new FileReader(slotsFile));
             String line = reader.readLine();
             while(line != null) {
-                if (debug) {
-                    System.out.println("line: " + line);
-                }
+                logger.debug("line: " + line);
                 int index = line.indexOf(':');
                 if (index >= 0) {
                     lineNumber = line.substring(0, index);

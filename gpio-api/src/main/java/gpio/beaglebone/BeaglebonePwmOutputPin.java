@@ -36,23 +36,31 @@ public class BeaglebonePwmOutputPin implements PwmOutputPin {
         this.device = device;
         device.setup(pinDefinition, GpioDevice.PinUse.OUTPUT_PWM);
         File pwmTest = device.findFile(device.getOcpDir(), "pwm_test_" + pinDefinition.getKey(), true);
+        System.out.println("pwmTest path "+pwmTest.getAbsolutePath()+ " by syso");
         period = new OutputStreamWriter(new FileOutputStream(new File(pwmTest, "period")));
+        
         duty = new OutputStreamWriter(new FileOutputStream(new File(pwmTest, "duty")));
         polarity = new OutputStreamWriter(new FileOutputStream(new File(pwmTest, "polarity")));
-        frequency((float) 2000.0).dutyCycle((float) 0.0).polarity(false);
+        frequency((float) 8000.0).dutyCycle((float) 0.0).polarity(false);
     }
 
     /**
      * @param frequency Frequency.
      * @throws java.io.IOException Failed to read/write device.
      */
-    @Override
     public BeaglebonePwmOutputPin frequency(float frequency) throws IOException {
         if (frequency <= 0.0) {
             throw new IllegalArgumentException("frequency must be greater than 0");
         }
         this.periodNs = BigDecimal.valueOf(1e9).divide(new BigDecimal(frequency)).longValue();
-        this.period.write(Long.toString(this.periodNs));
+        System.out.println("BigDecimal.valueOf(1e9)"+ BigDecimal.valueOf(1e9).toString()+ " "+BigDecimal.valueOf(1e9).longValue() );
+        System.out.println("periodNs "+this.periodNs+ " by syso ");
+        
+        //this.period.write(Long.toString(this.periodNs));
+        this.period.write(""+this.periodNs);
+        this.period.flush();
+        
+        // System.out.println("periodNs "+this.periodNs+ " by syso ");
         return this;
     }
 
@@ -60,7 +68,6 @@ public class BeaglebonePwmOutputPin implements PwmOutputPin {
      * @param polarity Polarity.
      * @throws java.io.IOException Failed to read/write device.
      */
-    @Override
     public BeaglebonePwmOutputPin polarity(boolean polarity) throws IOException {
         if (polarity) {
             this.polarity.write("1");
@@ -75,7 +82,6 @@ public class BeaglebonePwmOutputPin implements PwmOutputPin {
      * @param dutyCycle Duty cycle, minimum value is 0, maxiumum value is 1.
      * @throws java.io.IOException Failed to read/write device.
      */
-    @Override
     public BeaglebonePwmOutputPin dutyCycle(float dutyCycle) throws IOException {
         if (dutyCycle < 0.0 || dutyCycle > 1.0) {
             new IllegalArgumentException("dutyCycle must have a value from 0.0 to 1.0");
@@ -91,7 +97,6 @@ public class BeaglebonePwmOutputPin implements PwmOutputPin {
      * @param dutyCycle Duty cycle, minimum value is 0, maxiumum value is Short.MAX_VALUE.
      * @throws java.io.IOException Failed to read/write device.
      */
-    @Override
     public BeaglebonePwmOutputPin dutyCycle(short dutyCycle) throws IOException {
         if (dutyCycle < 0) {
             new IllegalArgumentException("dutyCycle must have a value from 0 to (including) Short.MAX_VALUE");
@@ -111,7 +116,6 @@ public class BeaglebonePwmOutputPin implements PwmOutputPin {
     /**
      * Stop using this pin.
      */
-    @Override
     public void close() throws IOException {
         try {
             period.close();
