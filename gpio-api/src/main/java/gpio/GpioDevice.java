@@ -71,10 +71,7 @@ public abstract class GpioDevice {
          * @throws IOException Failed to write to device.
          */
     public void writeToDevice(String device, String text) throws IOException {
-        /*if (debug) {
-            System.out.println("writeToDevice: " + device + " - " + text);
-        }*/
-        logger.debug("writeToDevice: " + device + " - " + text);
+        logger.debug("writeToDevice(String device, String text): " + device + " - " + text);
         OutputStreamWriter writer = null;
         try {
             writer = new OutputStreamWriter(new FileOutputStream(device));
@@ -85,12 +82,14 @@ public abstract class GpioDevice {
                     writer.close();
                 } catch (IOException e) {
                     // ignore
+                	logger.error("Error when closing the writer", e);
                 }
             }
         }
     }
 
-    private void loadDeviceTree(final String name) throws IOException {
+    @SuppressWarnings("unused")
+	private void loadDeviceTree(final String name) throws IOException {
         File capeMgrDir = findFile(new File("/sys/devices"), "bone_capemgr", true);
         File slotsFile = new File(capeMgrDir, "slots");
         boolean deviceFound = false;
@@ -110,6 +109,7 @@ public abstract class GpioDevice {
                 try {
                     reader.close();
                 } catch (IOException e) {
+                	logger.error("Error when closing the reader", e);
                 }
             }
         }
@@ -119,10 +119,12 @@ public abstract class GpioDevice {
         try {
             Thread.sleep(200);
         } catch (InterruptedException e) {
+        	logger.error("Thread.sleep(200) InterruptedException", e);
         }
     }
 
-    private void unloadDeviceTree(final String name) throws IOException {
+    @SuppressWarnings("unused")
+	private void unloadDeviceTree(final String name) throws IOException {
         File capeMgrDir = findFile(new File("/sys/devices"), "bone_capemgr", true);
         File slotsFile = new File(capeMgrDir, "slots");
         boolean deviceFound = false;
@@ -142,6 +144,7 @@ public abstract class GpioDevice {
             try {
                 reader.close();
             } catch (IOException e) {
+            	logger.error("Error when closing the reader", e);
             }
             if (lineNumber != null) {
                 writeToDevice(slotsFile.getAbsolutePath(), "-" + lineNumber);
@@ -151,6 +154,7 @@ public abstract class GpioDevice {
                 try {
                     reader.close();
                 } catch (IOException e) {
+                	logger.error("Error when closing the reader", e);
                 }
             }
         }

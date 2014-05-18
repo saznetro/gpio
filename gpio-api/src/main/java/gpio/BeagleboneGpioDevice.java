@@ -22,6 +22,7 @@ public class BeagleboneGpioDevice extends GpioDevice {
      * Setup pin before use.
      * @param pinDefinition Pin to be setup.
      * @param pinUse How to use this pin.
+     * 				 Eg.: INPUT_DIGITAL, OUTPUT_DIGITAL, OUTPUT_PWM 
      * @throws java.io.IOException Failed to write to device.
      * @throws gpio.PinConfigurationException Failed to configure pin.
      */

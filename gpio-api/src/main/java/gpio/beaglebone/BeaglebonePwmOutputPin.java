@@ -11,11 +11,14 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 
+import org.apache.log4j.Logger;
+
 /**
  * Output PWM pin.
  * @author Koert Zeilstra
  */
 public class BeaglebonePwmOutputPin implements PwmOutputPin {
+	private  Logger logger=Logger.getLogger(this.getClass().toString());
     private PinDefinition pinDefinition;
     private BeagleboneGpioDevice device;
     private OutputStreamWriter period;
@@ -36,7 +39,7 @@ public class BeaglebonePwmOutputPin implements PwmOutputPin {
         this.device = device;
         device.setup(pinDefinition, GpioDevice.PinUse.OUTPUT_PWM);
         File pwmTest = device.findFile(device.getOcpDir(), "pwm_test_" + pinDefinition.getKey(), true);
-        System.out.println("pwmTest path "+pwmTest.getAbsolutePath()+ " by syso");
+        logger.debug("pwmTest path "+pwmTest.getAbsolutePath()+ " by syso");
         period = new OutputStreamWriter(new FileOutputStream(new File(pwmTest, "period")));
         
         duty = new OutputStreamWriter(new FileOutputStream(new File(pwmTest, "duty")));
@@ -53,14 +56,14 @@ public class BeaglebonePwmOutputPin implements PwmOutputPin {
             throw new IllegalArgumentException("frequency must be greater than 0");
         }
         this.periodNs = BigDecimal.valueOf(1e9).divide(new BigDecimal(frequency)).longValue();
-        System.out.println("BigDecimal.valueOf(1e9)"+ BigDecimal.valueOf(1e9).toString()+ " "+BigDecimal.valueOf(1e9).longValue() );
-        System.out.println("periodNs "+this.periodNs+ " by syso ");
+        logger.debug("BigDecimal.valueOf(1e9)"+ BigDecimal.valueOf(1e9).toString()+ " "+BigDecimal.valueOf(1e9).longValue() );
+        logger.debug("periodNs "+this.periodNs+ " by syso ");
         
         //this.period.write(Long.toString(this.periodNs));
         this.period.write(""+this.periodNs);
         this.period.flush();
         
-        // System.out.println("periodNs "+this.periodNs+ " by syso ");
+        // logger.debug("periodNs "+this.periodNs+ " by syso ");
         return this;
     }
 
@@ -88,7 +91,7 @@ public class BeaglebonePwmOutputPin implements PwmOutputPin {
         }
         this.dutyCycle = (long) (this.periodNs * dutyCycle);
         this.duty.write(Long.toString(this.dutyCycle));
-//        System.out.println("dutyCycle " + periodNs + " " + dutyCycle + " " + this.dutyCycle);
+        logger.debug("dutyCycle(float dutyCycle) method: dutyCycle " + periodNs + " " + dutyCycle + " " + this.dutyCycle);
         this.duty.flush();
         return this;
     }
@@ -104,10 +107,10 @@ public class BeaglebonePwmOutputPin implements PwmOutputPin {
         try {
         this.dutyCycle = (long) (this.periodNs * dutyCycle / Short.MAX_VALUE);
         this.duty.write(Long.toString(this.dutyCycle));
-//        System.out.println("dutyCycle " + periodNs + " " + dutyCycle + " " + this.dutyCycle);
+        logger.debug("dutyCycle(short dutyCycle)  method: dutyCycle " + periodNs + " " + dutyCycle + " " + this.dutyCycle);
         this.duty.flush();
         } catch (IOException e) {
-            System.out.println("IOException dutyCycle=" + dutyCycle);
+            logger.debug("IOException dutyCycle=" + dutyCycle);
             throw e;
         }
         return this;
@@ -118,17 +121,26 @@ public class BeaglebonePwmOutputPin implements PwmOutputPin {
      */
     public void close() throws IOException {
         try {
+        	//period.flush();
             period.close();
         } catch (IOException e) {
+        	logger.error("Closing period was not succeed!", e);
         }
+        logger.debug("Closing period was succeed!");
         try {
+        	//duty.flush();
             duty.close();
         } catch (IOException e) {
+        	logger.error("Closing duty was not succeed!", e);
         }
+        logger.debug("Closing duty was succeed!");
         try {
+        	//polarity.flush();
             polarity.close();
         } catch (IOException e) {
+        	logger.error("Closing duty was not succeed!", e);
         }
+        logger.debug("Closing polarity was succeed!");
         device.close(pinDefinition);
     }
 }
